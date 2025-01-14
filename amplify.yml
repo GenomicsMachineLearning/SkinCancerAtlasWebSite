@@ -9,7 +9,7 @@ frontend:
       commands:
         - yarn generate
   artifacts:
-    baseDirectory: .output
+    baseDirectory: dist
     files:
       - '**/*'
   cache:
