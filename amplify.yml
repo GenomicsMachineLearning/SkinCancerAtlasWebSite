@@ -7,7 +7,7 @@ frontend:
         - yarn install --frozen-lockfile --cache-folder .yarn
     build:
       commands:
-        - yarn build
+        - yarn generate
   artifacts:
     baseDirectory: .output
     files:
