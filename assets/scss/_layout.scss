@@ -1,0 +1,41 @@
+@use "variables" as v;
+
+body {
+    font-family: v.$font-family-base;
+    font-size: v.$font-size-base;
+    color: v.$font-color-base;
+    overflow-x: hidden;
+}
+
+.container {
+    padding: v.$container-padding-y v.$container-padding-x;
+}
+.container-fluid {
+    padding: 0 v.$container-fluid-padding-x;
+}
+#content {
+    transition: v.$sidebar-transition;
+    &.sidebar-minimized {
+        margin-left: v.$sidebar-minimized-width;
+    }
+    &.sidebar-maximized {
+        margin-left: v.$sidebar-maximized-width;
+    }
+}
+.main-content {
+    margin-top: 2rem;
+}
+
+h1,h2,h3,h4,h5,h6 { color: v.$header-color }
+textarea:focus, input:focus{
+    outline: none;
+}
+
+.dark {
+    body {
+        color: v.$font-color-base-dark
+    }
+    h1,h2,h3,h4,h5,h6 {
+        color: v.$header-dark-color;
+    }
+}

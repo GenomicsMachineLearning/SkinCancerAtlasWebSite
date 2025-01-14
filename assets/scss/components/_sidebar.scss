@@ -1,0 +1,38 @@
+@use "../variables" as v;
+
+.sidebar-topbar {
+    height: v.$topbar-height
+}
+.sidebar-wrapper {
+    transition: v.$sidebar-transition;
+    width: v.$sidebar-minimized-width;
+    
+    .sidebar-item {
+        .sidebar-link {
+            transition: all .6s;
+            justify-content: center;
+            &.nuxt-link-exact-active {
+                background-color: v.$sidebar-link-active-bg;
+            }
+            .sidebar-menu-text {
+                margin-left: 1rem;
+            }
+        }
+    }
+    &.sidebar-open {
+        width: v.$sidebar-maximized-width;
+        & + #main-header {
+            margin-left: v.$sidebar-maximized-width;
+        }
+        .sidebar-link {
+            padding-left: 2rem;
+            padding-right: 2rem;
+            justify-content: flex-start;
+            .sidebar-menu-text {
+            }
+        }
+    }
+    & + #main-header {
+        margin-left: v.$sidebar-minimized-width;
+    }
+}

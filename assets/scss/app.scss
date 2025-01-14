@@ -1,0 +1,26 @@
+@use "./variables";
+@use "./layout";
+@use "./components/card";
+@use "./components/checkbox";
+@use "./components/dropdown";
+@use "./components/header";
+@use "./components/loading";
+@use "./components/input";
+@use "./components/modal";
+@use "./components/progress";
+@use "./components/sidebar";
+@use "./components/select";
+@use "./components/table";
+@use "./misc/transitions";
+@use "./utilities";
+
+/**
+* Theme Name: Nuxewind
+* Author: zuramai
+* Author URL: https://ahmadsaugi.com
+* Version: 0.0.1
+*/
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+

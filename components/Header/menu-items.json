@@ -1,0 +1,17 @@
+[
+    {
+        "text": "Atlas",
+        "icon": "house",
+        "url": "/"
+    },
+    {
+        "text": "Gene Explorer",
+        "icon": "app",
+        "url": "/app"
+    },
+    {
+        "text": "About",
+        "icon": "",
+        "url": "/about"
+    }
+]

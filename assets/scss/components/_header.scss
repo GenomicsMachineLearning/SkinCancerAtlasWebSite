@@ -1,0 +1,8 @@
+@use "../variables" as v;
+
+#header-wrapper {
+    #main-header {
+        height: v.$topbar-height;
+        transition: v.$sidebar-transition;
+    }
+}

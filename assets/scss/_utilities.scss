@@ -1,0 +1,53 @@
+@use "variables" as v;
+@use "sass:color";
+
+@layer utilities {
+	.bg-light {
+		background-color:#f4f6fc;
+	}
+    @variants dark {
+		.bg-dark { background-color: v.$bg-dark; }
+		.bg-dark-card { background-color: v.$bg-dark-card; }
+		.bg-dark-topbar { background-color: v.$bg-dark-topbar !important; }
+		.bg-dark-header { background-color: #222b42  !important;}
+		.bg-dark-input { background: v.$input-dark-bg }
+    }
+
+
+    // Responsive
+    .row {
+		margin-left: -1rem;
+		margin-right: -1rem;
+		flex-wrap: wrap;
+    }
+    .col { padding: 0 1rem; }
+     
+    // Opacity
+    .opacity-1\/2 { opacity: .5; }
+    .opacity-4\/5 { opacity: .8; }
+
+	// Position
+	.top--5 { top: -1rem }
+
+    // Font size
+    .text-xxs { font-size: .7rem }
+    
+	//  Colours
+	@variants hover,active,disabled {
+	@each $color, $value in v.$colors {
+			.bg-#{$color}  { background-color: $value; }
+			.bg-lighten-#{$color}  { background-color: color.adjust($value, $lightness: 10%) }
+			.bg-darken-#{$color}  { background-color: color.adjust($value, $lightness: -10%) }
+
+			.text-#{$color}  { color: $value }
+			.text-darken-#{$color}  { color: color.adjust($value, $lightness: -10%) }
+
+			.border-#{$color}  { border-color: $value }
+			.border-darken-#{$color}  { border-color: color.adjust($value, $lightness: -10%) }
+		}
+		@variants disabled {
+			.cursor-not-allowed { cursor: not-allowed }
+		}
+	}
+    
+}

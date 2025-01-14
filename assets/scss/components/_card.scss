@@ -1,0 +1,5 @@
+@use "sass:color";
+
+.card-wrapper {
+    box-shadow: 0 0 5px rgba(color.adjust(#f4f6fc,$lightness: -10%),.2);
+}
