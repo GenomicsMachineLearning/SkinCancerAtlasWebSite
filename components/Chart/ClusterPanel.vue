@@ -7,7 +7,7 @@
 
 <script>
 import "echarts";
-import {init, use, registerMap} from "echarts/core";
+import {init, registerMap, use} from "echarts/core";
 import {CanvasRenderer, SVGRenderer} from "echarts/renderers";
 import {MapChart} from "echarts/charts";
 import {TitleComponent, VisualMapComponent} from "echarts/components";
@@ -83,28 +83,53 @@ export default {
       const svgDoc = parser.parseFromString(svgString, "image/svg+xml");
 
       // Find all text elements within groups
-      const textElements = svgDoc.querySelectorAll('g > text');
+      const textElements = svgDoc.querySelectorAll('g text');
 
       textElements.forEach(text => {
-        // Get text position and dimensions
-        const x = parseFloat(text.getAttribute('x') || 0);
-        const y = parseFloat(text.getAttribute('y') || 0);
+        // Get text position (default to 0 if not specified)
+        let x = parseFloat(text.getAttribute('x') || 0);
+        let y = parseFloat(text.getAttribute('y') || 0);
         const textLength = parseFloat(text.getAttribute('textLength') || 0);
+        let transformGroup = null;
+
+        // Accumulate transformations from all parent groups
+        for (let parent = text.parentElement; parent; parent = parent.parentElement) {
+          if (parent.tagName === 'g' && parent.getAttribute('transform')) {
+            const transform = parent.getAttribute('transform');
+
+            // Parse matrix transform
+            if (transform.startsWith('matrix')) {
+              const matrixValues = transform.match(/matrix\((.*?)\)/)[1].split(',').map(parseFloat);
+
+              // Apply the translation from the matrix
+              x += matrixValues[4];
+              y += matrixValues[5];
+
+              // Store the last transformed parent
+              transformGroup = parent;
+            }
+          }
+        }
 
         // Create a transparent rectangle for better hit detection
-        // Adding padding around the text (10px on each side)
         const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        const fontSize = parseInt(window.getComputedStyle(text).fontSize) || 12;
         rect.setAttribute('x', Math.max(0, x - 10));
-        rect.setAttribute('y', Math.max(0, y - 20)); // Position above text for better hover
-        rect.setAttribute('width', textLength + 20); // Add padding
-        rect.setAttribute('height', 24);  // Typical text height plus padding
+        rect.setAttribute('y', Math.max(0, y - fontSize - 5)); // Position above text baseline
+        rect.setAttribute('width', (textLength || text.getComputedTextLength() || text.textContent.length * 7) + 20);
+        rect.setAttribute('height', fontSize + 10);
         rect.setAttribute('fill', 'transparent');
-        rect.setAttribute('pointer-events', 'all'); // Ensure it captures events
+        rect.setAttribute('stroke', 'rgba(0,0,0,0.9)'); // Slightly visible for debugging
+        rect.setAttribute('pointer-events', 'all');
 
-        // Add the rectangle before the text in the same group
-        // This ensures the text appears on top
-        const parentGroup = text.parentNode;
-        parentGroup.insertBefore(rect, text);
+        // Add the rectangle at the same level as the top-most transform group
+        if (transformGroup && transformGroup.parentNode) {
+          transformGroup.parentNode.insertBefore(rect, transformGroup);
+        } else {
+          // Fallback to the original approach
+          const parentGroup = text.parentNode;
+          parentGroup.insertBefore(rect, text);
+        }
       });
 
       // Convert back to string
@@ -153,6 +178,11 @@ export default {
     this.myChart = init(this.$refs.testLine);
 
     this.initChart();
+
+    // Add resize listener
+    window.addEventListener('resize', () => {
+    this.myChart.resize();
+  });
   },
 };
 </script>
@@ -161,7 +191,7 @@ export default {
 <style scoped>
 .chart {
   height: 80vh;
-  /* width: 140vh; */
+  width: 100%;
 }
 </style>
 
