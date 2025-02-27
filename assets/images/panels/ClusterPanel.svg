@@ -4,7 +4,7 @@
 
     <g id="ambiguous" name="Ambiguous">
         <g>
-            <g transform="matrix(1,0,0,1,-74.0036,-130.796)">
+            <g transform="matrix(1,0,0,1,-75.44,-130.796)">
                 <circle cx="598.86" cy="226.91"  r="5.0" style="fill:rgb(147,149,152);"/>
             </g>
             <g transform="matrix(1,0,0,1,534.427,99.1462)">
@@ -2734,11 +2734,11 @@
     </g>
     <g id="b_cell" name="B Cell">
         <g transform="matrix(1,0,0,1,0,-2.49663)">
-            <g transform="matrix(1,0,0,1,539.095,124.593)">
-                <text x="0px" y="0px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:12px;">B Cell</text>
-            </g>
             <g transform="matrix(1,0,0,1,-75.44,-121.952)">
                 <circle cx="598.86" cy="242.25"  r="5.0" style="fill:rgb(237,173,150);"/>
+            </g>
+            <g transform="matrix(1,0,0,1,539.095,124.593)">
+                <text x="0px" y="0px" style="font-family:'ArialMT', 'Arial', sans-serif;font-size:12px;">B Cell</text>
             </g>
         </g>
         <g transform="matrix(1,0,0,1,-75.44,-62.22)" style="fill:rgb(237,173,150);">
