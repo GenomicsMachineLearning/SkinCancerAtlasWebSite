@@ -55,7 +55,7 @@ export default {
             itemStyle: {
               // Don't replace colors, just add opacity for hover effect
               areaColor: null,
-              opacity: 0.8,
+              opacity: 1.0,
               borderColor: null,
               borderWidth: 0
             },
