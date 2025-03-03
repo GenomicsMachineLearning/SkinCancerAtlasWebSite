@@ -192,6 +192,7 @@ export default {
 .chart {
   height: 80vh;
   width: 100%;
+  background-color: white;
 }
 </style>
 
