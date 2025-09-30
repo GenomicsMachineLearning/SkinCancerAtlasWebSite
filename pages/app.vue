@@ -255,22 +255,18 @@ export default {
       this.selectedPlatform = '';
       this.selectedSample = '';
       this.selectedGene = '';
-      console.log('Condition changed to:', newVal);
     },
     selectedPlatform(newVal) {
       this.selectedPlatform = newVal;
       this.selectedSample = '';
       this.selectedGene = '';
-      console.log('Platform changed to:', newVal);
     },
     selectedSample(newVal) {
       this.selectedSample = newVal;
       this.selectedGene = '';
       if (newVal) this.fetchGenes();
-      console.log('Sample changed to:', newVal);
     },
     selectedGene(newVal) {
-      console.log('Gene changed to:', newVal);
     }
   },
   methods: {
@@ -291,8 +287,6 @@ export default {
         }
 
         this.samples = await response.json();
-        console.log('Fetched samples:', this.samples);
-        console.log('Available conditions:', this.available_conditions);
       } catch (err) {
         this.error = `Failed to load samples: ${err.message}`;
         console.error('Error fetching samples:', err);
@@ -308,7 +302,6 @@ export default {
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
         this.availableGenes = await response.json();
-        console.log('Fetched genes:', this.availableGenes);
       } catch (err) {
         console.error('Error fetching genes:', err);
         this.availableGenes = [];
