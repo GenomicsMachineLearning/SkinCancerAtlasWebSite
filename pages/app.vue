@@ -7,7 +7,7 @@
             Skin Cancer Multi-omics Data
           </template>
           <template slot="subtitle">
-            Interactive browser for spatial transcriptomics and single-cell data
+            Interactive browser for spatial transcriptomics gene expression data.
           </template>
         </nx-section-header>
 
@@ -80,6 +80,21 @@
                         </option>
                       </select>
                     </div>
+
+                    <!-- Dropdown 4: Gene -->
+                    <div class="control-group">
+                      <label for="gene-select">Select Gene:</label>
+                      <select id="gene-select" v-model="selectedGene" class="dropdown" :disabled="!selectedSample">
+                        <option value="">-- Choose Gene --</option>
+                        <option
+                            v-for="gene in availableGenes"
+                            :key="gene"
+                            :value="gene"
+                        >
+                          {{ gene }}
+                        </option>
+                      </select>
+                    </div>
                   </template>
                 </div>
               </template>
@@ -87,35 +102,56 @@
           </div>
 
           <!-- Right Pane - Content -->
+          <!-- Right Pane - Content -->
           <div class="right-pane">
             <nx-card>
-              <template slot="header">
-                <nx-card-header>
-                  <template slot="title">Visualization</template>
-                </nx-card-header>
-              </template>
               <template slot="body">
                 <div class="content-container">
                   <div v-if="!currentSample" class="placeholder">
                     <div class="placeholder-icon">📊</div>
                     <h3>Select Sample to View</h3>
-                    <p>Choose a condition, platform, and sample from the left panel</p>
+                    <p>Choose a condition, platform, sample and gene from the left panel</p>
                   </div>
 
-                  <!-- Show image when sample is selected -->
-                  <div v-else class="image-display">
-                    <div class="image-header">
-                      <h3>{{ selectedSample }} - {{ formatConditionName(selectedCondition) }}</h3>
-                      <span class="platform-badge">{{ formatPlatformName(selectedPlatform) }}</span>
+                  <!-- Show split view when sample is selected -->
+                  <div v-else class="split-view">
+                    <!-- Left Half - Gene Expression -->
+                    <div class="view-half">
+                      <div class="image-header">
+                        <h3>Gene Expression</h3>
+                        <span v-if="selectedGene" class="gene-badge">{{ selectedGene }}</span>
+                        <span v-else class="gene-badge empty">
+                          <h4>Select Gene to View</h4>
+                          <div class="placeholder-icon">📊</div>
+                        </span>
+                      </div>
+                      <div class="image-wrapper">
+                        <img
+                            v-if="selectedGene && geneImageUrl"
+                            :src="geneImageUrl"
+                            :alt="`Gene expression for ${selectedGene}`"
+                            class="cell-type-image"
+                            @error="handleImageError"
+                        />
+                      </div>
                     </div>
 
-                    <div class="image-wrapper">
-                      <img
-                          :src="cellTypeUrl"
-                          :alt="`Cell types for ${selectedSample}`"
-                          class="cell-type-image"
-                          @error="handleImageError"
-                      />
+                    <!-- Right Half - Cell Type -->
+                    <div class="view-half">
+                      <div class="image-header">
+                        <h3>Cell Types</h3>
+                        <span v-if="selectedCondition" class="gene-badge">{{ selectedCondition }}</span>
+                        <span v-if="selectedPlatform" class="gene-badge">{{ selectedPlatform }}</span>
+                        <span v-if="selectedSample" class="gene-badge">{{ selectedSample }}</span>
+                      </div>
+                      <div class="image-wrapper">
+                        <img
+                            :src="cellTypeUrl"
+                            :alt="`Cell types for ${selectedSample}`"
+                            class="cell-type-image"
+                            @error="handleImageError"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -139,6 +175,8 @@ export default {
     selectedPlatform: '',
     selectedSample: '',
     samples: [],
+    selectedGene: '',
+    availableGenes: [],
     loading: false,
     error: null,
     apiBaseUrl: ''
@@ -187,7 +225,25 @@ export default {
           .join('&');
 
       return `${baseUrl}?${queryString}`;
-    }
+    },
+    genesListUrl() {
+      if (!this.currentSample) return '';
+      return this.currentSample.links.gene_expression;
+    },
+    geneImageUrl() {
+      if (!this.currentSample || !this.selectedGene) return '';
+
+      const baseUrl = `${this.currentSample.links.gene_expression}/${this.selectedGene}`;
+      const params = this.currentSample.render_params;
+
+      if (!params) return baseUrl;
+
+      const queryString = Object.entries(params)
+          .map(([key, value]) => `${key}=${value}`)
+          .join('&');
+
+      return `${baseUrl}?${queryString}`;
+    },
   },
   mounted() {
     this.setApiBaseUrl();
@@ -196,15 +252,24 @@ export default {
   watch: {
     selectedCondition(newVal) {
       this.selectedCondition = newVal;
+      this.selectedPlatform = '';
+      this.selectedSample = '';
+      this.selectedGene = '';
       console.log('Condition changed to:', newVal);
     },
     selectedPlatform(newVal) {
       this.selectedPlatform = newVal;
+      this.selectedGene = '';
       console.log('Platform changed to:', newVal);
     },
     selectedSample(newVal) {
       this.selectedSample = newVal;
+      this.selectedGene = '';
+      if (newVal) this.fetchGenes();
       console.log('Sample changed to:', newVal);
+    },
+    selectedGene(newVal) {
+      console.log('Gene changed to:', newVal);
     }
   },
   methods: {
@@ -232,6 +297,20 @@ export default {
         console.error('Error fetching samples:', err);
       } finally {
         this.loading = false;
+      }
+    },
+    async fetchGenes() {
+      if (!this.currentSample) return;
+
+      try {
+        const response = await fetch(this.genesListUrl);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+        this.availableGenes = await response.json();
+        console.log('Fetched genes:', this.availableGenes);
+      } catch (err) {
+        console.error('Error fetching genes:', err);
+        this.availableGenes = [];
       }
     },
     formatConditionName(condition) {

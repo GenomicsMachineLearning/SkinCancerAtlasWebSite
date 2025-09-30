@@ -27,7 +27,7 @@
                     generated using single-cell RNA sequencing (scRNASeq), Visium spatial transcriptomics and
                     CosMx spatial transcriptomics.
                   </div>
-                  <img src="@/assets/images/panels/Methods.png" alt="methods" class="h-screen mx-auto">
+                  <img src="@/assets/images/panels/Methods.png" alt="methods" class="mx-auto">
 
                   <div class="p-4 flex items-center justify-center">
                     <p><b>Figure 1:</b> Overview of sample design and technologies used to generate the data available. </p>
