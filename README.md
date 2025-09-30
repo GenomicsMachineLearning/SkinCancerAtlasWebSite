@@ -18,9 +18,18 @@ $ yarn install
 ```
 
 3. Start the project
+
+Locally:
 ```bash
 $ yarn build
-$ yarn run
+$ yarn dev
+```
+
+Production
+```bash
+$ yarn build
+$ yarn run 
+```
 ```
 
 ## To-do List
