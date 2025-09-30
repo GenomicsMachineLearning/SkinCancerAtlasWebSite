@@ -38,9 +38,9 @@
                   <template v-else>
                     <!-- Dropdown 1: Condition -->
                     <div class="control-group">
-                      <label for="condition-select">Select Condition:</label>
+                      <label for="condition-select">Skin Cancer Type:</label>
                       <select id="condition-select" v-model="selectedCondition" class="dropdown">
-                        <option value="">-- Choose Condition --</option>
+                        <option value="">-- Choose --</option>
                         <option
                             v-for="condition in available_conditions"
                             :key="condition"
@@ -53,9 +53,9 @@
 
                     <!-- Dropdown 2: Platform -->
                     <div class="control-group">
-                      <label for="platform-select">Select Platform:</label>
-                      <select id="platform-select" v-model="selectedPlatform" class="dropdown">
-                        <option value="">-- Choose Platform --</option>
+                      <label for="platform-select">Platform:</label>
+                      <select id="platform-select" v-model="selectedPlatform" class="dropdown" :disabled="!selectedCondition">
+                        <option v-if="selectedCondition" value="">-- Choose --</option>
                         <option
                             v-for="platform in available_platforms"
                             :key="platform"
@@ -68,9 +68,9 @@
 
                     <!-- Dropdown 3: Sample -->
                     <div class="control-group">
-                      <label for="sample-select">Select Sample:</label>
-                      <select id="sample-select" v-model="selectedSample" class="dropdown">
-                        <option value="">-- Choose Sample --</option>
+                      <label for="sample-select">Sample:</label>
+                      <select id="sample-select" v-model="selectedSample" class="dropdown" :disabled="!selectedPlatform">
+                        <option v-if="selectedPlatform" value="">-- Choose --</option>
                         <option
                             v-for="sample in available_samples"
                             :key="sample"
@@ -83,9 +83,9 @@
 
                     <!-- Dropdown 4: Gene -->
                     <div class="control-group">
-                      <label for="gene-select">Select Gene:</label>
+                      <label for="gene-select">Gene:</label>
                       <select id="gene-select" v-model="selectedGene" class="dropdown" :disabled="!selectedSample">
-                        <option value="">-- Choose Gene --</option>
+                        <option v-if="selectedSample" value="">-- Choose --</option>
                         <option
                             v-for="gene in availableGenes"
                             :key="gene"
@@ -259,6 +259,7 @@ export default {
     },
     selectedPlatform(newVal) {
       this.selectedPlatform = newVal;
+      this.selectedSample = '';
       this.selectedGene = '';
       console.log('Platform changed to:', newVal);
     },
