@@ -50,46 +50,7 @@
     <nx-container horizontal="default">
       <nx-section-header>
         <template slot="title">
-          Skin Cancer Atlas
-        </template>
-      </nx-section-header>
-      <div class="flex row">
-        <div class="w-full col">
-          <div class="flex row">
-            <div class="w-full col">
-          
-              <nx-card>
-                <template slot="body">
-                  <div class="p-4">
-                    Welcome to the Skin Cancer Atlas. Here you can browse gene expression
-                     and ligand-receptor interactions at single-cell and spatial resolution for
-                      SCC, BCC and melanoma.
-                  </div>
-
-                  <router-link to="/"><nx-badge color="primary" >Atlas</nx-badge></router-link>
-
-                  <div class="p-4">
-                    This tab shows cell type clustering and annotation results from scRNASeq, 
-                    Visium and CosMx data. Hover over or click on each image for further detail.
-                  </div>
-
-                  <router-link to="/app"><nx-badge color="primary">Gene Explorer</nx-badge></router-link>
-
-                  <div class="p-4">
-                    Here you can browse to see your favourite gene or ligand-receptor pair at 
-                    single-cell and/or spatial resolution in select samples from SCC, BCC and melanoma patients.
-                  </div>
-                </template>
-              </nx-card>
-            </div>
-          </div>
-        </div>
-      </div>
-    </nx-container>
-    <nx-container horizontal="default">
-      <nx-section-header>
-        <template slot="title">
-          Data and code availability
+          Data and Code Availability
         </template>
       </nx-section-header>
       <div class="flex row">

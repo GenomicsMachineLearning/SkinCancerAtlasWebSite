@@ -54,7 +54,8 @@
                     <!-- Dropdown 2: Platform -->
                     <div class="control-group">
                       <label for="platform-select">Platform:</label>
-                      <select id="platform-select" v-model="selectedPlatform" class="dropdown" :disabled="!selectedCondition">
+                      <select id="platform-select" v-model="selectedPlatform" class="dropdown"
+                              :disabled="!selectedCondition">
                         <option v-if="selectedCondition" value="">-- Choose --</option>
                         <option
                             v-for="platform in available_platforms"
@@ -69,7 +70,8 @@
                     <!-- Dropdown 3: Sample -->
                     <div class="control-group">
                       <label for="sample-select">Sample:</label>
-                      <select id="sample-select" v-model="selectedSample" class="dropdown" :disabled="!selectedPlatform">
+                      <select id="sample-select" v-model="selectedSample" class="dropdown"
+                              :disabled="!selectedPlatform">
                         <option v-if="selectedPlatform" value="">-- Choose --</option>
                         <option
                             v-for="sample in available_samples"
@@ -120,19 +122,30 @@
                       <div class="image-header">
                         <h3>Gene Expression</h3>
                         <span v-if="selectedGene" class="gene-badge">{{ selectedGene }}</span>
-                        <span v-else class="gene-badge empty">
-                          <h4>Select Gene to View</h4>
-                          <div class="placeholder-icon">📊</div>
-                        </span>
+                        <span v-else class="gene-badge empty">Select Gene to View</span>
                       </div>
                       <div class="image-wrapper">
+                        <!-- Loading spinner -->
+                        <div v-if="geneImageLoading" class="image-loading">
+                          <div class="spinner"></div>
+                          <p>Loading gene expression...</p>
+                        </div>
+
+                        <!-- Image -->
                         <img
                             v-if="selectedGene && geneImageUrl"
+                            v-show="!geneImageLoading"
                             :src="geneImageUrl"
                             :alt="`Gene expression for ${selectedGene}`"
                             class="cell-type-image"
-                            @error="handleImageError"
+                            @load="handleGeneImageLoad"
+                            @error="handleGeneImageError"
                         />
+
+                        <!-- Empty state -->
+                        <div v-if="!selectedGene" class="empty-placeholder">
+                          <p>Select a gene to view expression</p>
+                        </div>
                       </div>
                     </div>
 
@@ -177,6 +190,7 @@ export default {
     samples: [],
     selectedGene: '',
     availableGenes: [],
+    geneImageLoading: false,
     loading: false,
     error: null,
     apiBaseUrl: ''
@@ -267,6 +281,9 @@ export default {
       if (newVal) this.fetchGenes();
     },
     selectedGene(newVal) {
+      if (newVal) {
+        this.geneImageLoading = true;
+      }
     }
   },
   methods: {
@@ -306,6 +323,14 @@ export default {
         console.error('Error fetching genes:', err);
         this.availableGenes = [];
       }
+    },
+    handleGeneImageLoad() {
+      this.geneImageLoading = false;
+    },
+    handleGeneImageError(event) {
+      this.geneImageLoading = false;
+      console.error('Failed to load gene image:', event.target.src);
+      event.target.alt = 'Image failed to load';
     },
     formatConditionName(condition) {
       const names = {
@@ -446,6 +471,25 @@ export default {
 }
 
 .loading-state p {
+  color: #718096;
+  font-size: 0.875rem;
+}
+
+.image-loading {
+  text-align: center;
+}
+
+.image-loading .spinner {
+  width: 50px;
+  height: 50px;
+  margin: 0 auto 1rem;
+  border: 4px solid #e2e8f0;
+  border-top: 4px solid #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.image-loading p {
   color: #718096;
   font-size: 0.875rem;
 }
