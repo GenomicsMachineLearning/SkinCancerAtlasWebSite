@@ -122,7 +122,6 @@
                       <div class="image-header">
                         <h3>Gene Expression</h3>
                         <span v-if="selectedGene" class="gene-badge">{{ selectedGene }}</span>
-                        <span v-else class="gene-badge empty">Select Gene to View</span>
                       </div>
                       <div class="image-wrapper">
                         <!-- Loading spinner -->
@@ -157,13 +156,30 @@
                         <span v-if="selectedPlatform" class="gene-badge">{{ selectedPlatform }}</span>
                         <span v-if="selectedSample" class="gene-badge">{{ selectedSample }}</span>
                       </div>
+
                       <div class="image-wrapper">
+                        <!-- Loading spinner -->
+                        <div v-if="cellTypeImageLoading" class="image-loading">
+                          <div class="spinner"></div>
+                          <p>Loading cell types...</p>
+                        </div>
+
+                        <!-- Image -->
                         <img
+                            v-if="selectedSample && cellTypeUrl"
+                            v-show="!cellTypeImageLoading"
                             :src="cellTypeUrl"
-                            :alt="`Cell types for ${selectedSample}`"
+                            :alt="`Cell Typing for ${selectedSample}`"
                             class="cell-type-image"
+                            @load="handleCellTypeImageLoad"
                             @error="handleImageError"
                         />
+
+                        <!-- Empty state -->
+
+                        <div v-if="!selectedSample" class="empty-placeholder">
+                          <p>Select a gene to view expression</p>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -191,6 +207,7 @@ export default {
     selectedGene: '',
     availableGenes: [],
     geneImageLoading: false,
+    cellTypeImageLoading: false,
     loading: false,
     error: null,
     apiBaseUrl: ''
@@ -278,7 +295,10 @@ export default {
     selectedSample(newVal) {
       this.selectedSample = newVal;
       this.selectedGene = '';
-      if (newVal) this.fetchGenes();
+      if (newVal) {
+        this.cellTypeImageLoading = true;
+        this.fetchGenes();
+      }
     },
     selectedGene(newVal) {
       if (newVal) {
@@ -323,6 +343,9 @@ export default {
         console.error('Error fetching genes:', err);
         this.availableGenes = [];
       }
+    },
+    handleCellTypeImageLoad() {
+      this.cellTypeImageLoading = false;
     },
     handleGeneImageLoad() {
       this.geneImageLoading = false;
