@@ -291,7 +291,7 @@ export default {
       const isDevelopment = process.env.NODE_ENV === 'development';
       this.apiBaseUrl = isDevelopment
           ? 'http://localhost:8000'
-          : 'https://skincanceratlas.com/api';
+          : 'https://skincanceratlas.com';
     },
     async fetchSamples() {
       try {
