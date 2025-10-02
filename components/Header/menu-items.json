@@ -1,17 +1,17 @@
 [
     {
-        "text": "Atlas",
-        "icon": "house",
+        "text": "scRNAseq Atlas",
+        "icon": "map",
         "url": "/"
     },
     {
-        "text": "Gene Explorer",
-        "icon": "app",
-        "url": "/app"
+        "text": "Spatial Atlas",
+        "icon": "map",
+        "url": "/spatial"
     },
     {
         "text": "About",
-        "icon": "",
+        "icon": "bookmark",
         "url": "/about"
     }
 ]
