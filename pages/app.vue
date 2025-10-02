@@ -291,7 +291,7 @@ export default {
       const isDevelopment = process.env.NODE_ENV === 'development';
       this.apiBaseUrl = isDevelopment
           ? 'http://localhost:8000'
-          : 'https://skincanceratlas.com';
+          : 'https://skincanceratlas.com/api';
     },
     async fetchSamples() {
       try {
@@ -416,33 +416,6 @@ export default {
   outline: none;
   border-color: #667eea;
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-}
-
-/* Debug Info */
-.debug-info {
-  margin-top: 1rem;
-  padding: 1rem;
-  background: #f7fafc;
-  border-radius: 6px;
-  border-left: 3px solid #667eea;
-}
-
-.debug-info h4 {
-  font-size: 0.875rem;
-  color: #4a5568;
-  margin-bottom: 0.5rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.debug-info p {
-  margin: 0.25rem 0;
-  font-size: 0.875rem;
-  color: #718096;
-}
-
-.debug-info strong {
-  color: #2d3748;
 }
 
 /* Loading State */
