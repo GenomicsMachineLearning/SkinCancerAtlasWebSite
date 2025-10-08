@@ -42,7 +42,7 @@
                       <select id="condition-select" v-model="selectedCondition" class="dropdown">
                         <option value="">-- Choose --</option>
                         <option
-                            v-for="condition in available_conditions"
+                            v-for="condition in availableConditions"
                             :key="condition"
                             :value="condition"
                         >
@@ -58,7 +58,7 @@
                               :disabled="!selectedCondition">
                         <option v-if="selectedCondition" value="">-- Choose --</option>
                         <option
-                            v-for="platform in available_platforms"
+                            v-for="platform in availablePlatforms"
                             :key="platform"
                             :value="platform"
                         >
@@ -74,7 +74,7 @@
                               :disabled="!selectedPlatform">
                         <option v-if="selectedPlatform" value="">-- Choose --</option>
                         <option
-                            v-for="sample in available_samples"
+                            v-for="sample in availableSamples"
                             :key="sample"
                             :value="sample"
                         >
@@ -86,8 +86,8 @@
                     <!-- Dropdown 4: Gene -->
                     <div class="control-group">
                       <label for="gene-select">Gene:</label>
-                      <select id="gene-select" v-model="selectedGene" class="dropdown" :disabled="!selectedSample">
-                        <option v-if="selectedSample" value="">-- Choose --</option>
+                      <select id="gene-select" v-model="selectedGene" class="dropdown" :disabled="!selectedSample || availableGenes.length === 0">
+                        <option v-if="selectedSample && !availableGenes.length == 0" value="">-- Choose --</option>
                         <option
                             v-for="gene in availableGenes"
                             :key="gene"
@@ -213,21 +213,21 @@ export default {
     apiBaseUrl: ''
   }),
   computed: {
-    available_conditions() {
+    availableConditions() {
       const uniqueConditions = [...new Set(this.samples.map(s => s.condition))];
       const order = ['melanoma', 'bcc', 'scc'];
       return uniqueConditions.sort((a, b) => {
         return order.indexOf(a) - order.indexOf(b);
       });
     },
-    available_platforms() {
+    availablePlatforms() {
       const availablePlatforms = [...new Set(this.samples.filter(s => s.condition === this.selectedCondition).map(s => s.platform))];
       const order = ['visium', 'xenium', 'cosmx'];
       return availablePlatforms.sort((a, b) => {
         return order.indexOf(a) - order.indexOf(b);
       });
     },
-    available_samples() {
+    availableSamples() {
       const selectedSample = [...new Set(this.samples.filter(s =>
           s.condition === this.selectedCondition && s.platform === this.selectedPlatform).map(s => s.id))];
       return selectedSample.sort()
@@ -296,6 +296,7 @@ export default {
       this.selectedSample = newVal;
       this.selectedGene = '';
       if (newVal) {
+        this.availableGenes = [];
         this.cellTypeImageLoading = true;
         this.fetchGenes();
       }
