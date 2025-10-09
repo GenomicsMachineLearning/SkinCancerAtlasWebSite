@@ -31,7 +31,7 @@
                   <!-- Error State -->
                   <div v-else-if="error" class="error-state">
                     <p>{{ error }}</p>
-                    <button @click="fetchSamples" class="retry-btn">Retry</button>
+                    <button @click="fetchScrnaseq" class="retry-btn">Retry</button>
                   </div>
 
                   <!-- Controls -->
@@ -119,7 +119,7 @@
 
                         <!-- Image -->
                         <img
-                            v-if="selectedSample && cellTypeUrl"
+                            v-if="cellTypeUrl"
                             v-show="!cellTypeImageLoading"
                             :src="cellTypeUrl"
                             :alt="`Cell Typing for ${selectedSample}`"
@@ -217,7 +217,7 @@ export default {
   },
   mounted() {
     this.setApiBaseUrl();
-    this.fetchSamples();
+    this.fetchScrnaseq();
   },
   watch: {
     selectedCondition(newVal) {
@@ -231,7 +231,7 @@ export default {
           ? 'http://localhost:8000'
           : 'https://skincanceratlas.com';
     },
-    async fetchSamples() {
+    async fetchScrnaseq() {
       try {
         this.loading = true;
         this.error = null;
