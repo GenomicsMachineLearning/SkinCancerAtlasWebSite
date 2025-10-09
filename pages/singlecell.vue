@@ -156,7 +156,7 @@ export default {
     selectedCondition: '',
     selectedPlatform: '',
     selectedSample: '',
-    samples: [],
+    scrnaseqs: [],
     selectedGene: '',
     availableGenes: [],
     geneImageLoading: false,
@@ -167,20 +167,18 @@ export default {
   }),
   computed: {
     availableConditions() {
-      const uniqueConditions = [...new Set(this.samples.map(s => s.condition))];
-      const order = ['melanoma', 'bcc', 'scc'];
+      const uniqueConditions = [...new Set(this.scrnaseqs.map(s => s.condition))];
+      const order = ['melanoma', 'scc_bcc'];
       return uniqueConditions.sort((a, b) => {
         return order.indexOf(a) - order.indexOf(b);
       });
     },
     currentSample() {
-      if (!this.selectedCondition || !this.selectedPlatform || !this.selectedSample) {
+      if (!this.selectedCondition) {
         return null;
       }
-      return this.samples.find(
-          s => s.condition === this.selectedCondition &&
-              s.platform === this.selectedPlatform &&
-              s.id === this.selectedSample
+      return this.scrnaseqs.find(
+          s => s.id === this.selectedCondition
       );
     },
     cellTypeUrl() {
@@ -237,13 +235,13 @@ export default {
       try {
         this.loading = true;
         this.error = null;
-        const response = await fetch(`${this.apiBaseUrl}/samples`);
+        const response = await fetch(`${this.apiBaseUrl}/scrnaseq`);
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        this.samples = await response.json();
+        this.scrnaseqs = await response.json();
       } catch (err) {
         this.error = `Failed to load samples: ${err.message}`;
         console.error('Error fetching samples:', err);
@@ -265,18 +263,9 @@ export default {
     formatConditionName(condition) {
       const names = {
         'melanoma': 'Melanoma',
-        'scc': 'SCC',
-        'bcc': 'BCC'
+        'scc_bcc': 'SCC/BCC',
       };
       return names[condition] || condition.toUpperCase();
-    },
-    formatPlatformName(platform) {
-      const names = {
-        'visium': 'Visium',
-        'xenium': 'Xenium',
-        'cosmx': 'CosMX'
-      };
-      return names[platform] || platform.toUpperCase();
     },
     handleImageError(event) {
       console.error('Failed to load image:', event.target.src);
