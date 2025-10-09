@@ -50,6 +50,21 @@
                         </option>
                       </select>
                     </div>
+
+                    <!-- Dropdown 2: Gene -->
+                    <div class="control-group">
+                      <label for="gene-select">Gene:</label>
+                      <select id="gene-select" v-model="selectedGene" class="dropdown" :disabled="!selectedCondition || availableGenes.length === 0">
+                        <option v-if="selectedCondition" value="">-- Choose --</option>
+                        <option
+                            v-for="gene in availableGenes"
+                            :key="gene"
+                            :value="gene"
+                        >
+                          {{ gene }}
+                        </option>
+                      </select>
+                    </div>
                   </template>
                 </div>
               </template>
@@ -106,8 +121,6 @@
                       <div class="image-header">
                         <h3>Cell Types</h3>
                         <span v-if="selectedCondition" class="gene-badge">{{ selectedCondition }}</span>
-                        <span v-if="selectedPlatform" class="gene-badge">{{ selectedPlatform }}</span>
-                        <span v-if="selectedSample" class="gene-badge">{{ selectedSample }}</span>
                       </div>
 
                       <div class="image-wrapper">
@@ -122,7 +135,7 @@
                             v-if="cellTypeUrl"
                             v-show="!cellTypeImageLoading"
                             :src="cellTypeUrl"
-                            :alt="`Cell Typing for ${selectedSample}`"
+                            :alt="`Cell Typing for ${selectedCondition}`"
                             class="cell-type-image"
                             @load="handleCellTypeImageLoad"
                             @error="handleImageError"
@@ -130,7 +143,7 @@
 
                         <!-- Empty state -->
 
-                        <div v-if="!selectedSample" class="empty-placeholder">
+                        <div v-if="!selectedCondition" class="empty-placeholder">
                           <p>Select a gene to view expression</p>
                         </div>
                       </div>
@@ -154,8 +167,6 @@ export default {
   },
   data: () => ({
     selectedCondition: '',
-    selectedPlatform: '',
-    selectedSample: '',
     scrnaseqs: [],
     selectedGene: '',
     availableGenes: [],
@@ -222,6 +233,11 @@ export default {
   watch: {
     selectedCondition(newVal) {
       this.selectedCondition = newVal;
+      if (newVal) {
+        this.availableGenes = [];
+        this.cellTypeImageLoading = true;
+        this.fetchScrnaseqGenes();
+      }
     },
   },
   methods: {
@@ -247,6 +263,19 @@ export default {
         console.error('Error fetching samples:', err);
       } finally {
         this.loading = false;
+      }
+    },
+    async fetchScrnaseqGenes() {
+      if (!this.currentSample) return;
+
+      try {
+        const response = await fetch(this.genesListUrl);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+        this.availableGenes = await response.json();
+      } catch (err) {
+        console.error('Error fetching genes:', err);
+        this.availableGenes = [];
       }
     },
     handleCellTypeImageLoad() {

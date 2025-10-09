@@ -87,7 +87,7 @@
                     <div class="control-group">
                       <label for="gene-select">Gene:</label>
                       <select id="gene-select" v-model="selectedGene" class="dropdown" :disabled="!selectedSample || availableGenes.length === 0">
-                        <option v-if="selectedSample && !availableGenes.length == 0" value="">-- Choose --</option>
+                        <option v-if="selectedSample" value="">-- Choose --</option>
                         <option
                             v-for="gene in availableGenes"
                             :key="gene"
