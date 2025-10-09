@@ -10,6 +10,11 @@
         "url": "/spatial"
     },
     {
+        "text": "Single Cell",
+        "icon": "record-circle",
+        "url": "/singlecell"
+    },
+    {
         "text": "About",
         "icon": "bookmark",
         "url": "/about"
