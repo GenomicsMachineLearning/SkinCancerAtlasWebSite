@@ -271,7 +271,6 @@ export default {
       }
     },
     async fetchScrnaseqGenes() {
-      console.error("Fetching genes")
       if (!this.currentCondition) return;
 
       try {
