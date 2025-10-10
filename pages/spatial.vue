@@ -104,7 +104,6 @@
           </div>
 
           <!-- Right Pane - Content -->
-          <!-- Right Pane - Content -->
           <div class="right-pane">
             <nx-card>
               <template slot="body">

@@ -72,12 +72,11 @@
           </div>
 
           <!-- Right Pane - Content -->
-          <!-- Right Pane - Content -->
           <div class="right-pane">
             <nx-card>
               <template slot="body">
                 <div class="content-container">
-                  <div v-if="!currentSample" class="placeholder">
+                  <div v-if="!currentCondition" class="placeholder">
                     <div class="placeholder-icon">📊</div>
                     <h3>Select Sample to View</h3>
                     <p>Choose a condition, platform, sample and gene from the left panel</p>
@@ -184,7 +183,7 @@ export default {
         return order.indexOf(a) - order.indexOf(b);
       });
     },
-    currentSample() {
+    currentCondition() {
       if (!this.selectedCondition) {
         return null;
       }
@@ -193,10 +192,10 @@ export default {
       );
     },
     cellTypeUrl() {
-      if (!this.currentSample) return '';
+      if (!this.currentCondition) return '';
 
-      const baseUrl = this.currentSample.links.cell_type;
-      const params = this.currentSample.render_params;
+      const baseUrl = this.currentCondition.links.cell_type;
+      const params = this.currentCondition.render_params;
 
       if (!params) return baseUrl;
 
@@ -208,14 +207,14 @@ export default {
       return `${baseUrl}?${queryString}`;
     },
     genesListUrl() {
-      if (!this.currentSample) return '';
-      return this.currentSample.links.gene_expression;
+      if (!this.currentCondition) return '';
+      return this.currentCondition.links.gene_expression;
     },
     geneImageUrl() {
-      if (!this.currentSample || !this.selectedGene) return '';
+      if (!this.currentCondition || !this.selectedGene) return '';
 
-      const baseUrl = `${this.currentSample.links.gene_expression}/${this.selectedGene}`;
-      const params = this.currentSample.render_params;
+      const baseUrl = `${this.currentCondition.links.gene_expression}/${this.selectedGene}`;
+      const params = this.currentCondition.render_params;
 
       if (!params) return baseUrl;
 
@@ -233,12 +232,18 @@ export default {
   watch: {
     selectedCondition(newVal) {
       this.selectedCondition = newVal;
+      this.selectedGene = '';
       if (newVal) {
         this.availableGenes = [];
         this.cellTypeImageLoading = true;
         this.fetchScrnaseqGenes();
       }
     },
+    selectedGene(newVal) {
+      if (newVal) {
+        this.geneImageLoading = true;
+      }
+    }
   },
   methods: {
     setApiBaseUrl() {
@@ -266,7 +271,8 @@ export default {
       }
     },
     async fetchScrnaseqGenes() {
-      if (!this.currentSample) return;
+      console.error("Fetching genes")
+      if (!this.currentCondition) return;
 
       try {
         const response = await fetch(this.genesListUrl);
