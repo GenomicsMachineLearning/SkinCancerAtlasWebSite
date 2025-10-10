@@ -86,7 +86,8 @@
                     <!-- Dropdown 4: Gene -->
                     <div class="control-group">
                       <label for="gene-select">Gene:</label>
-                      <select id="gene-select" v-model="selectedGene" class="dropdown" :disabled="!selectedSample || availableGenes.length === 0">
+                      <select id="gene-select" v-model="selectedGene" class="dropdown"
+                              :disabled="!selectedSample || availableGenes.length === 0">
                         <option v-if="selectedSample" value="">-- Choose --</option>
                         <option
                             v-for="gene in availableGenes"
@@ -116,38 +117,7 @@
 
                   <!-- Show split view when sample is selected -->
                   <div v-else class="split-view">
-                    <!-- Left Half - Gene Expression -->
-                    <div class="view-half">
-                      <div class="image-header">
-                        <h3>Gene Expression</h3>
-                        <span v-if="selectedGene" class="gene-badge">{{ selectedGene }}</span>
-                      </div>
-                      <div class="image-wrapper">
-                        <!-- Loading spinner -->
-                        <div v-if="geneImageLoading" class="image-loading">
-                          <div class="spinner"></div>
-                          <p>Loading gene expression...</p>
-                        </div>
-
-                        <!-- Image -->
-                        <img
-                            v-if="selectedGene && geneImageUrl"
-                            v-show="!geneImageLoading"
-                            :src="geneImageUrl"
-                            :alt="`Gene expression for ${selectedGene}`"
-                            class="cell-type-image"
-                            @load="handleGeneImageLoad"
-                            @error="handleGeneImageError"
-                        />
-
-                        <!-- Empty state -->
-                        <div v-if="!selectedGene" class="empty-placeholder">
-                          <p>Select a gene to view expression</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- Right Half - Cell Type -->
+                    <!-- Cell Type -->
                     <div class="view-half">
                       <div class="image-header">
                         <h3>Cell Types</h3>
@@ -177,6 +147,36 @@
                         <!-- Empty state -->
 
                         <div v-if="!selectedSample" class="empty-placeholder">
+                          <p>Select a gene to view expression</p>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Gene Expression -->
+                    <div class="view-half">
+                      <div class="image-header">
+                        <h3>Gene Expression</h3>
+                        <span v-if="selectedGene" class="gene-badge">{{ selectedGene }}</span>
+                      </div>
+                      <div class="image-wrapper">
+                        <!-- Loading spinner -->
+                        <div v-if="geneImageLoading" class="image-loading">
+                          <div class="spinner"></div>
+                          <p>Loading gene expression...</p>
+                        </div>
+
+                        <!-- Image -->
+                        <img
+                            v-if="selectedGene && geneImageUrl"
+                            v-show="!geneImageLoading"
+                            :src="geneImageUrl"
+                            :alt="`Gene expression for ${selectedGene}`"
+                            class="cell-type-image"
+                            @load="handleGeneImageLoad"
+                            @error="handleGeneImageError"
+                        />
+
+                        <!-- Empty state -->
+                        <div v-if="!selectedGene" class="empty-placeholder">
                           <p>Select a gene to view expression</p>
                         </div>
                       </div>
