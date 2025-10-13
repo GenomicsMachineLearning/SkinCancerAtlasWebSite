@@ -10,6 +10,11 @@
         "url": "/spatial"
     },
     {
+        "text": "Interactome",
+        "icon": "arrow-down-up",
+        "url": "/interactome"
+    },
+    {
         "text": "Single Cell",
         "icon": "record-circle",
         "url": "/singlecell"
