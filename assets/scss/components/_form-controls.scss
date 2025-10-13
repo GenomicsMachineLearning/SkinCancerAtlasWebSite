@@ -1,0 +1,115 @@
+@use "../variables" as v;
+
+// Shared form control styles
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.control-group label {
+  font-weight: 600;
+  color: v.$header-color;  // Using your existing variable
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+// Dark mode for labels
+.dark .control-group label {
+  color: v.$header-dark-color;  // Using your existing dark variable
+}
+
+.dropdown {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  background: white;
+  font-size: 1rem;
+  color: v.$header-color;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: #cbd5e0;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  }
+}
+
+// Dark mode for dropdowns
+.dark .dropdown {
+  background: v.$input-dark-bg;
+  color: v.$input-dark-color;
+  border-color: v.$input-dark-border;
+
+  &:hover {
+    border-color: #6b7280;  // slightly lighter than border
+  }
+
+  &:focus {
+    border-color: #667eea;
+  }
+}
+
+// Loading states
+.loading-state {
+  text-align: center;
+  padding: 2rem 1rem;
+
+  p {
+    color: v.$font-color-base;
+    font-size: 0.875rem;
+  }
+}
+
+.dark .loading-state p {
+  color: v.$font-color-base-dark;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  margin: 0 auto 1rem;
+  border: 3px solid #e2e8f0;
+  border-top: 3px solid #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// Error states
+.error-state {
+  text-align: center;
+  padding: 2rem 1rem;
+
+  p {
+    color: v.$danger;
+    margin-bottom: 1rem;
+    font-size: 0.875rem;
+  }
+}
+
+.retry-btn {
+  background: #667eea;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: background 0.2s;
+
+  &:hover {
+    background: #5568d3;
+  }
+}

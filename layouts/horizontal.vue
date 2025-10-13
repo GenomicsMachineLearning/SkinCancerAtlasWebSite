@@ -18,7 +18,7 @@
           <div class="flex row place-content-center">
             <div class="flex col">
               <img
-                src="@/assets/images/qimr.svg"
+                src="@/assets/images/QIMR-Berghofer-Logo-New.png"
                 class="object-scale-down w-96"
                 alt="QIMR Logo"
               />
