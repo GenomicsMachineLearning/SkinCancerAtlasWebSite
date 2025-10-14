@@ -70,7 +70,7 @@
                     <div class="control-group">
                       <label for="gene-select">Gene:</label>
                       <select id="gene-select" v-model="selectedGene" class="dropdown"
-                              :disabled="!selectedCondition || availableGenes.length === 0">
+                              :disabled="!selectedCellType || availableGenes.length === 0">
                         <option v-if="selectedCondition" value="">-- Choose --</option>
                         <option
                             v-for="gene in availableGenes"
@@ -272,6 +272,9 @@ export default {
     },
     selectedCellType(newVal) {
       this.selectedCellType = newVal;
+      if (newVal) {
+        this.availableGenes = [];
+      }
       this.fetchScrnaseqGenes();
     },
     selectedGene(newVal) {
