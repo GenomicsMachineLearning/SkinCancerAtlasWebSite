@@ -232,14 +232,18 @@ export default {
 
       return `${baseUrl}?${queryString}`;
     },
-    genesListUrl() {
+    listCellTypesUrl() {
+      if (!this.currentCondition) return '';
+      return `${this.currentCondition.links.list_cell_types}`;
+    },
+    listGenesUrl() {
       if (!this.currentCondition || !this.currentCellType) return '';
-      return this.currentCellType.links.list_cell_types;
+      return this.currentCellType.links.list_genes;
     },
     geneImageUrl() {
       if (!this.currentCondition || !this.currentCellType || !this.selectedGene) return '';
 
-      const baseUrl = `${this.currentCellType.links.list_cell_types}/${this.selectedGene}`;
+      const baseUrl = `${this.listGenesUrl}/${this.selectedGene}`;
       const params = this.currentCondition.render_params;
 
       if (!params) return baseUrl;
@@ -295,22 +299,22 @@ export default {
 
         this.scrnaseqs = await response.json();
       } catch (err) {
-        this.error = `Failed to load samples: ${err.message}`;
-        console.error('Error fetching samples:', err);
+        this.error = `Error fetching scRNASeq: ${err.message}`;
+        console.error('Error fetching scRNASeq:', err);
       } finally {
         this.loading = false;
       }
     },
     async fetchScrnaseqCellTypes() {
       try {
-        const response = await fetch(this.genesListUrl());
+        const response = await fetch(this.listCellTypesUrl);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         this.cellTypes = await response.json();
       } catch (err) {
         this.error = `Failed to load cell types: ${err.message}`;
-        console.error('Error fetching samples:', err);
+        console.error('Error fetching cell types:', err);
       } finally {
       }
     },
