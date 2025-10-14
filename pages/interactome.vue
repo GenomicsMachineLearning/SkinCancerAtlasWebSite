@@ -88,7 +88,7 @@
                       <label for="gene-select">Ligand-Receptor:</label>
                       <select id="lr-select" v-model="selectedLr" class="dropdown"
                               :disabled="!selectedSample || availableLrs.length === 0">
-                        <option v-if="selectedSample" value="">-- Choose --</option>
+                        <option v-if="selectedSample && availableLrs.length !== 0" value="">-- Choose --</option>
                         <option
                             v-for="lr in availableLrs"
                             :key="lr"
@@ -300,9 +300,9 @@ export default {
     },
     selectedSample(newVal) {
       this.selectedSample = newVal;
-      this.selectedLr = '';
       if (newVal) {
         this.availableLrs = [];
+        this.selectedLr = '';
         this.cellTypeImageLoading = true;
         this.fetchLRs();
       }

@@ -72,7 +72,7 @@
                       <label for="gene-select">Gene:</label>
                       <select id="gene-select" v-model="selectedGene" class="dropdown"
                               :disabled="!selectedCellType || availableGenes.length === 0">
-                        <option v-if="selectedCondition" value="">-- Choose --</option>
+                        <option v-if="selectedCellType && availableGenes.length !== 0" value="">-- Choose --</option>
                         <option
                             v-for="gene in availableGenes"
                             :key="gene"
@@ -263,12 +263,12 @@ export default {
   watch: {
     selectedCondition(newVal) {
       this.selectedCondition = newVal;
-      this.cellTypeImageLoading = true;
-      this.selectedCellType = '';
-      this.selectedGene = '';
       if (newVal) {
-        this.availableGenes = [];
+        this.selectedCellType = "";
         this.cellTypes = [];
+        this.selectedGene = "";
+        this.availableGenes = [];
+        this.cellTypeImageLoading = true;
         this.fetchScrnaseqCellTypes();
       }
     },
@@ -276,8 +276,9 @@ export default {
       this.selectedCellType = newVal;
       if (newVal) {
         this.availableGenes = [];
+        this.selectedGene = "";
+        this.fetchScrnaseqGenes();
       }
-      this.fetchScrnaseqGenes();
     },
     selectedGene(newVal) {
       if (newVal) {
