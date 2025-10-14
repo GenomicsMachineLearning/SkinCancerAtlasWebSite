@@ -54,7 +54,8 @@
                     <!-- Dropdown 2: Cell Type -->
                     <div class="control-group">
                       <label for="cell-type-select">Cell Type:</label>
-                      <select id="cell-type-select" v-model="selectedCellType" class="dropdown">
+                      <select id="cell-type-select" v-model="selectedCellType" class="dropdown"
+                              :disabled="!selectedCondition || cellTypes.length === 0">
                         <option value="">-- Choose --</option>
                         <option
                             v-for="cell_types in availableCellTypes"
@@ -267,6 +268,7 @@ export default {
       this.selectedGene = '';
       if (newVal) {
         this.availableGenes = [];
+        this.cellTypes = [];
         this.fetchScrnaseqCellTypes();
       }
     },
