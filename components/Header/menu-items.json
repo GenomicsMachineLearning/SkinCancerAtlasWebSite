@@ -5,6 +5,11 @@
         "url": "/"
     },
     {
+        "text": "scRNAseq Atlas",
+        "icon": "record-circle",
+        "url": "/singlecell"
+    },
+    {
         "text": "Spatial Atlas",
         "icon": "map",
         "url": "/spatial"
@@ -13,10 +18,5 @@
         "text": "Interactome",
         "icon": "arrow-down-up",
         "url": "/interactome"
-    },
-    {
-        "text": "scRNAseq Atlas",
-        "icon": "record-circle",
-        "url": "/singlecell"
     }
 ]

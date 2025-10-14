@@ -51,7 +51,22 @@
                       </select>
                     </div>
 
-                    <!-- Dropdown 2: Gene -->
+                    <!-- Dropdown 2: Cell Type -->
+                    <div class="control-group">
+                      <label for="cell-type-select">Cell Type:</label>
+                      <select id="cell-type-select" v-model="selectedCellType" class="dropdown">
+                        <option value="">-- Choose --</option>
+                        <option
+                            v-for="cell_types in availableCellTypes"
+                            :key="cell_types"
+                            :value="cell_types"
+                        >
+                          {{ formatCellTypeName(cell_types) }}
+                        </option>
+                      </select>
+                    </div>
+
+                    <!-- Dropdown 3: Gene -->
                     <div class="control-group">
                       <label for="gene-select">Gene:</label>
                       <select id="gene-select" v-model="selectedGene" class="dropdown"
@@ -77,10 +92,10 @@
             <nx-card>
               <template slot="body">
                 <div class="content-container">
-                  <div v-if="!currentCondition" class="placeholder">
+                  <div v-if="!currentCondition && !currentCellType" class="placeholder">
                     <div class="placeholder-icon">📊</div>
                     <h3>Select Sample to View</h3>
-                    <p>Choose a condition, platform, sample and gene from the left panel</p>
+                    <p>Choose a skin cancer type, cell type and gene from the left panel</p>
                   </div>
 
                   <!-- Show split view when sample is selected -->
@@ -109,12 +124,6 @@
                             @load="handleCellTypeImageLoad"
                             @error="handleImageError"
                         />
-
-                        <!-- Empty state -->
-
-                        <div v-if="!selectedCondition" class="empty-placeholder">
-                          <p>Select a gene to view expression</p>
-                        </div>
                       </div>
                     </div>
                     <!-- Gene Expression -->
@@ -142,7 +151,10 @@
                         />
 
                         <!-- Empty state -->
-                        <div v-if="!selectedGene" class="empty-placeholder">
+                        <div v-if="!selectedCellType && !selectedGene" class="empty-placeholder">
+                          <p>Select a cell type and gene to view expression</p>
+                        </div>
+                        <div v-if="selectedCellType && !selectedGene" class="empty-placeholder">
                           <p>Select a gene to view expression</p>
                         </div>
                       </div>
@@ -166,8 +178,10 @@ export default {
   },
   data: () => ({
     selectedCondition: '',
-    scrnaseqs: [],
+    selectedCellType: '',
     selectedGene: '',
+    scrnaseqs: [],
+    cellTypes: [],
     availableGenes: [],
     geneImageLoading: false,
     cellTypeImageLoading: false,
@@ -183,12 +197,24 @@ export default {
         return order.indexOf(a) - order.indexOf(b);
       });
     },
+    availableCellTypes() {
+      const uniqueCell = [...new Set(this.cellTypes.map(c => c.cell_type))];
+      return uniqueCell
+    },
     currentCondition() {
       if (!this.selectedCondition) {
         return null;
       }
       return this.scrnaseqs.find(
           s => s.id === this.selectedCondition
+      );
+    },
+    currentCellType() {
+      if (!this.selectedCellType) {
+        return null;
+      }
+      return this.cellTypes.find(
+          c => c.cell_type === this.selectedCellType
       );
     },
     cellTypeUrl() {
@@ -207,13 +233,13 @@ export default {
       return `${baseUrl}?${queryString}`;
     },
     genesListUrl() {
-      if (!this.currentCondition) return '';
-      return this.currentCondition.links.gene_expression;
+      if (!this.currentCondition || !this.currentCellType) return '';
+      return this.currentCellType.links.list_cell_types;
     },
     geneImageUrl() {
-      if (!this.currentCondition || !this.selectedGene) return '';
+      if (!this.currentCondition || !this.currentCellType || !this.selectedGene) return '';
 
-      const baseUrl = `${this.currentCondition.links.gene_expression}/${this.selectedGene}`;
+      const baseUrl = `${this.currentCellType.links.list_cell_types}/${this.selectedGene}`;
       const params = this.currentCondition.render_params;
 
       if (!params) return baseUrl;
@@ -232,12 +258,17 @@ export default {
   watch: {
     selectedCondition(newVal) {
       this.selectedCondition = newVal;
+      this.cellTypeImageLoading = true;
+      this.selectedCellType = '';
       this.selectedGene = '';
       if (newVal) {
         this.availableGenes = [];
-        this.cellTypeImageLoading = true;
-        this.fetchScrnaseqGenes();
+        this.fetchScrnaseqCellTypes();
       }
+    },
+    selectedCellType(newVal) {
+      this.selectedCellType = newVal;
+      this.fetchScrnaseqGenes();
     },
     selectedGene(newVal) {
       if (newVal) {
@@ -270,11 +301,28 @@ export default {
         this.loading = false;
       }
     },
+    async fetchScrnaseqCellTypes() {
+      try {
+        const response = await fetch(this.genesListUrl());
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        this.cellTypes = await response.json();
+      } catch (err) {
+        this.error = `Failed to load cell types: ${err.message}`;
+        console.error('Error fetching samples:', err);
+      } finally {
+      }
+    },
     async fetchScrnaseqGenes() {
-      if (!this.currentCondition) return;
+      if (!this.currentCellType) return;
+
+      const foundCellType = this.cellTypes.find(
+        c => c.cell_type === this.selectedCellType
+      );
 
       try {
-        const response = await fetch(this.genesListUrl);
+        const response = await fetch(foundCellType.links.list_genes);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
         this.availableGenes = await response.json();
@@ -300,6 +348,9 @@ export default {
         'scc_bcc': 'SCC/BCC',
       };
       return names[condition] || condition.toUpperCase();
+    },
+    formatCellTypeName(cell_type_name) {
+      return cell_type_name;
     },
     handleImageError(event) {
       console.error('Failed to load image:', event.target.src);

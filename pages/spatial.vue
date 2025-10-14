@@ -112,7 +112,7 @@
                   <div v-if="!currentSample" class="placeholder">
                     <div class="placeholder-icon">📊</div>
                     <h3>Select Sample to View</h3>
-                    <p>Choose a condition, platform, sample and gene from the left panel</p>
+                    <p>Choose a skin cancer type, platform, sample and gene from the left panel</p>
                   </div>
 
                   <!-- Show split view when sample is selected -->
