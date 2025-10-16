@@ -88,7 +88,10 @@
                       <label for="gene-select">Ligand-Receptor:</label>
                       <select id="lr-select" v-model="selectedLr" class="dropdown"
                               :disabled="!selectedSample || availableLrs.length === 0">
-                        <option v-if="selectedSample && availableLrs.length !== 0" value="">-- Choose --</option>
+                        <option value="">{{
+                            lrsLoading ? 'Loading...' :
+                                !selectedSample || availableLrs.length === 0 ? '' : '-- Choose --' }}
+                        </option>
                         <option
                             v-for="lr in availableLrs"
                             :key="lr"
@@ -208,6 +211,7 @@ export default {
     lrImageLoading: false,
     cellTypeImageLoading: false,
     loading: false,
+    lrsLoading: false,
     error: null,
     apiBaseUrl: ''
   }),
@@ -341,6 +345,8 @@ export default {
     async fetchLRs() {
       if (!this.currentSample) return;
 
+      this.lrsLoading = true;
+
       try {
         const response = await fetch(this.lrsListUrl);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -349,6 +355,8 @@ export default {
       } catch (err) {
         console.error('Error fetching lrs:', err);
         this.availableLrs = [];
+      } finally {
+        this.lrsLoading = false;
       }
     },
     handleCellTypeImageLoad() {

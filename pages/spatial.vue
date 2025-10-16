@@ -88,7 +88,10 @@
                       <label for="gene-select">Gene:</label>
                       <select id="gene-select" v-model="selectedGene" class="dropdown"
                               :disabled="!selectedSample || availableGenes.length === 0">
-                        <option v-if="selectedSample && availableGenes.length !== 0" value="">-- Choose --</option>
+                        <option value="">{{
+                            genesLoading ? 'Loading...' :
+                                !selectedSample || availableGenes.length === 0 ? '' : '-- Choose --' }}
+                        </option>
                         <option
                             v-for="gene in availableGenes"
                             :key="gene"
@@ -208,6 +211,7 @@ export default {
     geneImageLoading: false,
     cellTypeImageLoading: false,
     loading: false,
+    genesLoading: false,
     error: null,
     apiBaseUrl: ''
   }),
@@ -334,6 +338,7 @@ export default {
     async fetchGenes() {
       if (!this.currentSample) return;
 
+      this.genesLoading = true;
       try {
         const response = await fetch(this.genesListUrl);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -342,6 +347,8 @@ export default {
       } catch (err) {
         console.error('Error fetching genes:', err);
         this.availableGenes = [];
+      } finally {
+        this.genesLoading = false;
       }
     },
     handleCellTypeImageLoad() {
