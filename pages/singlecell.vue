@@ -56,7 +56,10 @@
                       <label for="cell-type-select">Cell Type:</label>
                       <select id="cell-type-select" v-model="selectedCellType" class="dropdown"
                               :disabled="!selectedCondition || cellTypes.length === 0">
-                        <option value="">-- Choose --</option>
+                        <option value="">{{
+                            cellTypesLoading ? 'Loading...' :
+                                !selectedCondition || cellTypes.length === 0 ? '' : '-- Choose --' }}
+                        </option>
                         <option
                             v-for="cell_types in availableCellTypes"
                             :key="cell_types"
@@ -72,7 +75,10 @@
                       <label for="gene-select">Gene:</label>
                       <select id="gene-select" v-model="selectedGene" class="dropdown"
                               :disabled="!selectedCellType || availableGenes.length === 0">
-                        <option v-if="selectedCellType && availableGenes.length !== 0" value="">-- Choose --</option>
+                        <option value="">{{
+                            genesLoading ? 'Loading...' :
+                                !selectedCellType || availableGenes.length === 0 ? '' : '-- Choose --' }}
+                        </option>
                         <option
                             v-for="gene in availableGenes"
                             :key="gene"
@@ -187,6 +193,8 @@ export default {
     geneImageLoading: false,
     cellTypeImageLoading: false,
     loading: false,
+    cellTypesLoading: false,
+    genesLoading: false,
     error: null,
     apiBaseUrl: ''
   }),
@@ -199,8 +207,7 @@ export default {
       });
     },
     availableCellTypes() {
-      const uniqueCell = [...new Set(this.cellTypes.map(c => c.cell_type))];
-      return uniqueCell
+      return [...new Set(this.cellTypes.map(c => c.cell_type))];
     },
     currentCondition() {
       if (!this.selectedCondition) {
@@ -294,15 +301,14 @@ export default {
           : 'https://skincanceratlas.com';
     },
     async fetchScrnaseq() {
-      try {
-        this.loading = true;
-        this.error = null;
-        const response = await fetch(`${this.apiBaseUrl}/scrnaseq`);
+      this.loading = true;
+      this.error = null;
 
+      try {
+        const response = await fetch(`${this.apiBaseUrl}/scrnaseq`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-
         this.scrnaseqs = await response.json();
       } catch (err) {
         this.error = `Error fetching scRNASeq: ${err.message}`;
@@ -312,6 +318,7 @@ export default {
       }
     },
     async fetchScrnaseqCellTypes() {
+      this.cellTypesLoading = true;
       try {
         const response = await fetch(this.listCellTypesUrl);
         if (!response.ok) {
@@ -322,6 +329,7 @@ export default {
         this.error = `Failed to load cell types: ${err.message}`;
         console.error('Error fetching cell types:', err);
       } finally {
+        this.cellTypesLoading = false;
       }
     },
     async fetchScrnaseqGenes() {
@@ -331,14 +339,18 @@ export default {
         c => c.cell_type === this.selectedCellType
       );
 
+      this.genesLoading = true;
       try {
         const response = await fetch(foundCellType.links.list_genes);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
         this.availableGenes = await response.json();
       } catch (err) {
         console.error('Error fetching genes:', err);
         this.availableGenes = [];
+      } finally {
+        this.genesLoading = false;
       }
     },
     handleCellTypeImageLoad() {
